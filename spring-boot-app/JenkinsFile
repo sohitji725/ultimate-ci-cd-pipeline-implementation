@@ -32,8 +32,8 @@ pipeline {
       }
     }
 
-   stage('Build Docker Image') {
-  agent { label 'docker-host' } // node with Docker installed
+  stage('Build Docker Image') {
+  agent { label '' } // empty means run on the default node
   steps {
     script {
       sh "docker build -t sohit725/ultimate-cicd:${BUILD_NUMBER} spring-boot-app"
@@ -43,8 +43,7 @@ pipeline {
       }
     }
   }
-}
-
+}  
 
     stage('Update Deployment File') {
       environment {
