@@ -9,7 +9,6 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        // This pulls your Git repository into the workspace
         checkout scm
         sh 'echo ✅ Code checked out successfully'
       }
@@ -53,39 +52,33 @@ pipeline {
       }
     }
 
- stage('Update Deployment File') {
-    environment {
+    stage('Update Deployment File') {
+      environment {
         GIT_REPO_NAME = "ultimate-ci-cd-pipeline-implementation"
         GIT_USER_NAME = "sohitji725"
-    }
-    steps {
+      }
+      steps {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-            sh '''
-                echo "=== Verifying current workspace ==="
-                pwd
-                ls -la
+          sh '''
+            echo "=== Verifying current workspace ==="
+            pwd
+            ls -la
 
-                echo "=== Configuring Git user ==="
-                git config user.email "ssji1404725@gmail.com"
-                git config user.name "sohit sahu"
+            echo "=== Configuring Git user ==="
+            git config user.email "ssji1404725@gmail.com"
+            git config user.name "sohit sahu"
 
-                echo "=== Updating deployment file ==="
-                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+            echo "=== Updating deployment file ==="
+            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
 
-                echo "=== Committing changes ==="
-                git add spring-boot-app-manifests/deployment.yml
-                git diff --staged --quiet || git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+            echo "=== Committing changes ==="
+            git add spring-boot-app-manifests/deployment.yml
+            git diff --staged --quiet || git commit -m "Update deployment image to version ${BUILD_NUMBER}"
 
-                echo "=== Pushing to GitHub ==="
-                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
-            '''
+            echo "=== Pushing to GitHub ==="
+            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+          '''
         }
-    }
-}
-
-  }
-}
-
       }
     }
   }
