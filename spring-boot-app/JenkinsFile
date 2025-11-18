@@ -1,40 +1,45 @@
 pipeline {
-agent {
-  docker {
-    image 'sohit725/maven-abhishek-java17:v1'
-    args """--user root \
-      -v /var/run/docker.sock:/var/run/docker.sock \
-      -v ${WORKSPACE}:${WORKSPACE}"""
+  agent {
+    docker {
+      image 'sohit725/maven-abhishek-java17:v1'
+      args """--user root \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v ${WORKSPACE}:${WORKSPACE}"""
+    }
   }
-}
+
   stages {
+
     stage('Checkout') {
       steps {
         checkout scm
-        sh 'echo ✅ Code checked out successfully'
+        sh 'echo "✅ Code checked out successfully"'
       }
     }
+
     stage('Build and Test') {
       steps {
         sh 'ls -ltr'
         sh 'cd spring-boot-app && mvn clean package'
       }
     }
+
     stage('Static Code Analysis') {
       environment {
         SONAR_URL = "http://18.205.233.24:9000"
       }
       steps {
         withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_AUTH_TOKEN')]) {
-          sh '''
+          sh """
             cd spring-boot-app
             mvn sonar:sonar \
               -Dsonar.login=$SONAR_AUTH_TOKEN \
               -Dsonar.host.url=${SONAR_URL}
-          '''
+          """
         }
       }
     }
+
     stage('Build and Push Docker Image') {
       environment {
         DOCKER_IMAGE = "sohit725/ultimate-cicd:${BUILD_NUMBER}"
@@ -49,27 +54,30 @@ agent {
         }
       }
     }
+
     stage('Update Deployment File') {
-    environment {
+      environment {
         GIT_REPO_NAME = "ultimate-ci-cd-pipeline-implementation"
         GIT_USER_NAME = "sohitji725"
       }
       steps {
         dir("${WORKSPACE}") {
-        withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-        sh '''
-          git config user.email "ssji1404725@gmail.com"
-          git config user.name "sohit sahu"
+          withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+            sh """
+              git config user.email "ssji1404725@gmail.com"
+              git config user.name "sohit sahu"
 
-          sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+              sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
 
-          git add spring-boot-app-manifests/deployment.yml
-          git commit -m "Update deployment image to version ${BUILD_NUMBER}" || true
+              git add spring-boot-app-manifests/deployment.yml
+              git commit -m "Update deployment image to version ${BUILD_NUMBER}" || true
 
-          git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
-        '''
+              git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+            """
+          }
+        }
       }
     }
-  }
-}
-}
+
+  } // stages
+} // pipeline
