@@ -67,20 +67,26 @@ pipeline {
             }
         }
 
-        stage('Update Deployment File') {
+               stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "ultimate-ci-cd-pipeline-implementation"
                 GIT_USER_NAME = "sohit725"
             }
             steps {
-                // Ensure we are in the workspace root where .git resides
                 dir("${WORKSPACE}") {
                     withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                        script { // Use script block for better Groovy control and cleaner variable usage
+                        script {
                             sh '''
                                 echo "--- DEBUG: Current Directory Content Before Git ---"
                                 ls -a
                                 ls -a .git/ # Verify .git directory exists and is accessible
+
+                                # Explicitly set GIT_WORK_TREE and GIT_DIR
+                                # PWD is the current working directory, which is ${WORKSPACE}
+                                export GIT_WORK_TREE="$PWD"
+                                export GIT_DIR="$PWD/.git"
+                                echo "GIT_WORK_TREE set to: $GIT_WORK_TREE"
+                                echo "GIT_DIR set to: $GIT_DIR"
 
                                 # Set Git user info
                                 git config user.email "ssji1404725@gmail.com"
