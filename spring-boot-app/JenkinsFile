@@ -70,7 +70,7 @@ pipeline {
                stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "ultimate-ci-cd-pipeline-implementation"
-                GIT_USER_NAME = "sohit725"
+                GIT_USER_NAME = "sohitji725"
             }
             steps {
                 dir("${WORKSPACE}") {
