@@ -6,10 +6,11 @@ pipeline {
                 --user root \
                 -v /var/run/docker.sock:/var/run/docker.sock \
                 -v ${WORKSPACE}:${WORKSPACE} 
-            """ // <-- FIX: WORKSPACE mount restored
+            """ // <-- FIX: Workspace mount is essential
         }
     }
-    
+    // ... rest of the pipeline stages
+
     stages {
         
         stage('Debug Agent Setup') {
