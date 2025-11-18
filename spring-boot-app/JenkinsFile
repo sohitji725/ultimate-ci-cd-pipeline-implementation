@@ -6,7 +6,7 @@ pipeline {
                 --user root \
                 -v /var/run/docker.sock:/var/run/docker.sock \
                 -v ${WORKSPACE}:${WORKSPACE} 
-            """ 
+            """
         }
     }
     
@@ -14,7 +14,6 @@ pipeline {
         
         stage('Debug Agent Setup') {
             steps {
-                // DEBUG STEP: Check where the pipeline is running and list contents
                 sh 'echo "--- DEBUG: Current Working Directory ---"'
                 sh 'pwd'
                 sh 'echo "--- DEBUG: Environment Variables (Partial) ---"'
