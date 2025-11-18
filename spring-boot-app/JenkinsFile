@@ -8,9 +8,9 @@ pipeline {
             """
         }
     }
-    
+
     stages {
-        
+
         stage('Debug Agent Setup') {
             steps {
                 sh 'echo "--- DEBUG: Current Working Directory ---"'
@@ -21,21 +21,21 @@ pipeline {
                 sh 'ls -a'
             }
         }
-        
+
         stage('Checkout') {
             steps {
                 checkout scm
                 sh 'echo ✅ Code checked out successfully'
             }
         }
-        
+
         stage('Build and Test') {
             steps {
                 sh 'ls -ltr'
                 sh 'cd spring-boot-app && mvn clean package'
             }
         }
-        
+
         stage('Static Code Analysis') {
             environment {
                 SONAR_URL = "http://18.205.233.24:9000"
@@ -51,7 +51,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Build and Push Docker Image') {
             environment {
                 DOCKER_IMAGE = "sohit725/ultimate-cicd:${BUILD_NUMBER}"
@@ -66,42 +66,46 @@ pipeline {
                 }
             }
         }
-        
-stage('Update Deployment File') {
+
+        stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "ultimate-ci-cd-pipeline-implementation"
-                GIT_USER_NAME = "sohitji725"
+                GIT_USER_NAME = "sohit725"
             }
             steps {
+                // Ensure we are in the workspace root where .git resides
                 dir("${WORKSPACE}") {
                     withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                        sh '''
-                            echo "--- DEBUG: Current Directory Content Before Git ---"
-                            ls -a
-                            
-                            # Explicitly tell git to operate in the current directory
-                            git -C . config user.email "ssji1404725@gmail.com"
-                            git -C . config user.name "sohit sahu"
-                            
-                            echo "Git configuration successful. Proceeding to modify deployment file..."
+                        script { // Use script block for better Groovy control and cleaner variable usage
+                            sh '''
+                                echo "--- DEBUG: Current Directory Content Before Git ---"
+                                ls -a
+                                ls -a .git/ # Verify .git directory exists and is accessible
 
-                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
-                            
-                            echo "Deployment file updated. Adding to Git..."
-                            git -C . add spring-boot-app-manifests/deployment.yml
-                            
-                            # Commit changes. `|| true` handles cases where no changes are found.
-                            git -C . commit -m "Update deployment image to version ${BUILD_NUMBER}" || true
-                            
-                            echo "Pushing changes to GitHub..."
-                            # Push using the token for authentication
-                            git -C . push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
-                            
-                            echo "--- Git Operations Complete ---"
-                        '''
+                                # Set Git user info
+                                git config user.email "ssji1404725@gmail.com"
+                                git config user.name "sohit sahu"
+                                echo "Git configuration successful. Proceeding to modify deployment file..."
+
+                                # Modify the deployment file
+                                sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
+
+                                echo "Deployment file updated. Adding to Git..."
+                                git add spring-boot-app-manifests/deployment.yml
+
+                                # Commit changes. `|| true` handles cases where no changes are found.
+                                git commit -m "Update deployment image to version ${BUILD_NUMBER}" || true
+
+                                echo "Pushing changes to GitHub..."
+                                # Push using the token for authentication
+                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+
+                                echo "--- Git Operations Complete ---"
+                            '''
+                        }
                     }
                 }
             }
         }
     }
-} // <-- This is the final closing brace that was missing!
+}
