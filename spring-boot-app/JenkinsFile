@@ -1,5 +1,5 @@
 pipeline {
-    aagent {
+    agent {
         docker {
             image 'sohit725/maven-abhishek-java17:v1'
             args """
