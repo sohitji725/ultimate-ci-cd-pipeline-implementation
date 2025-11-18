@@ -80,19 +80,19 @@ pipeline {
                             ls -a
                             
                             # CRITICAL FIX for 'fatal: not in a git directory': Use -C .
-                            git -C . config user.email "ssji1404725@gmail.com"
-                            git -C . config user.name "sohit sahu"
+                            git config user.email "ssji1404725@gmail.com"
+                            git config user.name "sohit sahu"
                             
                             echo "Git configuration successful. Proceeding to commit..."
 
                             sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" spring-boot-app-manifests/deployment.yml
                             
-                            git -C . add spring-boot-app-manifests/deployment.yml
-                            # Use -C . for the commit command as well
-                            git -C . commit -m "Update deployment image to version ${BUILD_NUMBER}" || true
+                            git  add spring-boot-app-manifests/deployment.yml
+                            # Use  for the commit command as well
+                            git commit -m "Update deployment image to version ${BUILD_NUMBER}" || true
                             
                             # Push changes using the token for authentication
-                            git -C . push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                             
                             echo "--- Git Operations Complete ---"
                         '''
