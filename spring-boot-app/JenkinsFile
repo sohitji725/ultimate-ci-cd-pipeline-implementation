@@ -73,13 +73,13 @@ stage('Update Deployment File') {
                 GIT_USER_NAME = "sohitji725"
             }
             steps {
-                dir("${WORKSPACE}") { // Ensure we are at the root of the workspace where .git exists
+                dir("${WORKSPACE}") {
                     withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                         sh '''
                             echo "--- DEBUG: Current Directory Content Before Git ---"
                             ls -a
                             
-                            // Explicitly tell git to operate in the current directory
+                            # Explicitly tell git to operate in the current directory
                             git -C . config user.email "ssji1404725@gmail.com"
                             git -C . config user.name "sohit sahu"
                             
@@ -90,11 +90,11 @@ stage('Update Deployment File') {
                             echo "Deployment file updated. Adding to Git..."
                             git -C . add spring-boot-app-manifests/deployment.yml
                             
-                            // Commit changes. `|| true` handles cases where no changes are found.
+                            # Commit changes. `|| true` handles cases where no changes are found.
                             git -C . commit -m "Update deployment image to version ${BUILD_NUMBER}" || true
                             
                             echo "Pushing changes to GitHub..."
-                            // Push using the token for authentication
+                            # Push using the token for authentication
                             git -C . push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                             
                             echo "--- Git Operations Complete ---"
