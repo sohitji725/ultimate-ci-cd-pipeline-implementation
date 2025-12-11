@@ -1,14 +1,8 @@
 # Jenkins Pipeline for Java based application using Maven, SonarQube, Argo CD, Helm and Kubernetes
 
-![Screenshot 2023-03-28 at 9 38 09 PM](https://user-images.githubusercontent.com/43399466/228301952-abc02ca2-9942-4a67-8293-f76647b6f9d8.png)
+![CI/CD Pipeline](https://user-images.githubusercontent.com/43399466/228301952-abc02ca2-9942-4a67-8293-f76647b6f9d8.png)
 
-
-# 📘 **README.md (Generated)**
-
-```markdown
 # 🚀 Production-Grade CI/CD Pipeline with Jenkins, Docker, SonarQube, Argo CD & Kubernetes
-
-
 
 ### 🧩 The Problem  
 Manual deployments often cause:
@@ -65,166 +59,98 @@ The CI/CD pipeline consists of **8 automated stages** defined in the `Jenkinsfil
 
 ## 📂 Repository Structure
 
-```
+├── spring-boot-app/ # Java/Spring Boot application source code
+├── spring-boot-app-manifests/ # Kubernetes manifests & Helm charts
+├── Jenkinsfile # Complete CI/CD pipeline script
+└── ArgoCD/ # Argo CD application + sync configuration
 
-.
-├── spring-boot-app/              # Java/Spring Boot application source code
-├── spring-boot-app-manifests/    # Kubernetes manifests & Helm charts
-├── Jenkinsfile                    # Complete CI/CD pipeline script
-└── ArgoCD/                        # Argo CD application + sync configuration
-
-````
 
 ---
 
-## 🚀 Getting Started
+# 📦 Short Version (Included as Requested)
 
-Follow the steps below to replicate this CI/CD pipeline.
-
----
-
-### ### **Prerequisites**
-Before starting, ensure the following are installed:
-
-- Kubernetes Cluster (Minikube, EKS, GKE, etc.)
-- Jenkins server with Docker access
-- Helm
-- SonarQube server
-- Argo CD installed on the K8s cluster
+## 🔧 Prerequisites
+- Java application code hosted on a Git repository  
+- Jenkins server  
+- Kubernetes cluster  
+- Helm package manager  
+- Argo CD  
 
 ---
 
-## 🛠️ Installation Steps
+## 🪜 Steps
 
-### **1. Jenkins Setup**
-Install plugins:
-- Git
-- Maven Integration
-- Pipeline
-- Kubernetes Continuous Deploy
-- SonarQube Scanner
-
-Configure:
-- JDK
-- Maven
-- SonarQube server credentials
-- DockerHub credentials
+### **1. Install the necessary Jenkins plugins:**
+1. Git plugin  
+2. Maven Integration plugin  
+3. Pipeline plugin  
+4. Kubernetes Continuous Deploy plugin  
 
 ---
 
-### **2. Install Argo CD**
-
-```bash
-kubectl create namespace argocd
-kubectl apply -n argocd \
-  -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-````
-
-Access Argo CD UI by port-forwarding:
-
-```bash
-kubectl port-forward svc/argocd-server -n argocd 8080:443
-```
+### **2. Create a new Jenkins pipeline**
+- Create a pipeline job  
+- Configure it with your Git repository URL  
+- Add a `Jenkinsfile` to the repository  
 
 ---
 
-### **3. Create CI/CD Pipeline in Jenkins**
+### **3. Define the pipeline stages**
 
-* Create a *Pipeline Job*
-* Point it to your repository URL
-* Make sure the `Jenkinsfile` path is correct
-  (default: `./Jenkinsfile`)
-
----
-
-### **4. Configure GitHub Webhooks**
-
-In your GitHub repo:
-
-* Go to **Settings → Webhooks**
-* Add Jenkins webhook URL
-  `http://<jenkins-url>/github-webhook/`
-* Trigger events: **Push** & **PR merges**
+#### **Stage 1:** Checkout the source code  
+#### **Stage 2:** Build using Maven  
+#### **Stage 3:** Run unit tests (JUnit, Mockito)  
+#### **Stage 4:** Run SonarQube analysis  
+#### **Stage 5:** Package JAR  
+#### **Stage 6:** Deploy to test environment via Helm  
+#### **Stage 7:** Run user acceptance tests (Selenium optional)  
+#### **Stage 8:** Promote to production using Argo CD  
 
 ---
 
-## 🧠 What I Learned
-
-Building this project taught me:
-
-* **DevOps ≠ Tools** — It’s about reliability, resilience, and flow
-* **Breaking production safely** teaches real debugging skills
-* Automation is effective only when the manual process is well understood
-* **GitOps** is the future of cloud-native and declarative infrastructure
+### **4. Configure Jenkins pipeline stages**
+- Git plugin → checkout  
+- Maven plugin → build, package  
+- SonarQube plugin → analysis  
+- Kubernetes Continuous Deploy plugin → Helm deploy  
+- Argo CD → promote to production  
 
 ---
 
-## 🤝 Connect With Me
+## 🛠️ 5. Set up Argo CD
+- Install Argo CD on Kubernetes  
+- Create Git repo for manifests / Helm charts  
+- Add Helm chart for the application  
+- Configure Argo CD to track the repo  
 
-**Author:** Sohit
+---
+
+## 🔗 6. Integrate Jenkins with Argo CD
+- Add Argo CD API token to Jenkins credentials  
+- Update Jenkinsfile to trigger Argo CD deployments  
+
+---
+
+## ▶️ 7. Run the Pipeline
+- Trigger Jenkins pipeline  
+- Observe each stage  
+- Fix issues as needed  
+
+---
+
+# 🧠 What I Learned
+
+- DevOps is not about tools — it’s about **reliability & flow**  
+- Breaking production safely teaches real debugging skills  
+- Automation works only when the manual process is understood  
+- GitOps is the future of cloud-native DevOps  
+
+---
+
+# 🤝 Connect With Me
+
+**Author:** Sohit  
 **GitHub:** [sohitji725](https://github.com/sohitji725)
 
 If you're looking for a DevOps/Cloud Engineer who learns by doing and builds real systems—I'd love to connect!
 
----
-
-```
-
-
-
-✅ A shorter version  
-Prerequisites:
-
-   -  Java application code hosted on a Git repository
-   -   Jenkins server
-   -  Kubernetes cluster
-   -  Helm package manager
-   -  Argo CD
-
-Steps:
-
-    1. Install the necessary Jenkins plugins:
-       1.1 Git plugin
-       1.2 Maven Integration plugin
-       1.3 Pipeline plugin
-       1.4 Kubernetes Continuous Deploy plugin
-
-    2. Create a new Jenkins pipeline:
-       2.1 In Jenkins, create a new pipeline job and configure it with the Git repository URL for the Java application.
-       2.2 Add a Jenkinsfile to the Git repository to define the pipeline stages.
-
-    3. Define the pipeline stages:
-        Stage 1: Checkout the source code from Git.
-        Stage 2: Build the Java application using Maven.
-        Stage 3: Run unit tests using JUnit and Mockito.
-        Stage 4: Run SonarQube analysis to check the code quality.
-        Stage 5: Package the application into a JAR file.
-        Stage 6: Deploy the application to a test environment using Helm.
-        Stage 7: Run user acceptance tests on the deployed application.
-        Stage 8: Promote the application to a production environment using Argo CD.
-
-    4. Configure Jenkins pipeline stages:
-        Stage 1: Use the Git plugin to check out the source code from the Git repository.
-        Stage 2: Use the Maven Integration plugin to build the Java application.
-        Stage 3: Use the JUnit and Mockito plugins to run unit tests.
-        Stage 4: Use the SonarQube plugin to analyze the code quality of the Java application.
-        Stage 5: Use the Maven Integration plugin to package the application into a JAR file.
-        Stage 6: Use the Kubernetes Continuous Deploy plugin to deploy the application to a test environment using Helm.
-        Stage 7: Use a testing framework like Selenium to run user acceptance tests on the deployed application.
-        Stage 8: Use Argo CD to promote the application to a production environment.
-
-    5. Set up Argo CD:
-        Install Argo CD on the Kubernetes cluster.
-        Set up a Git repository for Argo CD to track the changes in the Helm charts and Kubernetes manifests.
-        Create a Helm chart for the Java application that includes the Kubernetes manifests and Helm values.
-        Add the Helm chart to the Git repository that Argo CD is tracking.
-
-    6. Configure Jenkins pipeline to integrate with Argo CD:
-       6.1 Add the Argo CD API token to Jenkins credentials.
-       6.2 Update the Jenkins pipeline to include the Argo CD deployment stage.
-
-    7. Run the Jenkins pipeline:
-       7.1 Trigger the Jenkins pipeline to start the CI/CD process for the Java application.
-       7.2 Monitor the pipeline stages and fix any issues that arise.
-
-This end-to-end Jenkins pipeline will automate the entire CI/CD process for a Java application, from code checkout to production deployment, using popular tools like SonarQube, Argo CD, Helm, and Kubernetes.
